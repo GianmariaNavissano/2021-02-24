@@ -47,17 +47,48 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	Match m = this.cmbMatch.getValue();
+    	if(m==null) {
+    		this.txtResult.appendText("Seleziona un match");
+    		return;
+    	}
     	
+    	this.model.creaGrafo(m);
+    	
+    	this.txtResult.appendText("Grafo creato\nvertici: "+this.model.nVertici()+"\narchi :"+this.model.nArchi()+"\n");
     }
 
     @FXML
     void doGiocatoreMigliore(ActionEvent event) {    	
+    	this.txtResult.clear();
+    	if(this.model.getGrafo() == null) {
+    		this.txtResult.appendText("Crea prima il grafo!\n");
+    		return;
+    	}
     	
+    	this.txtResult.appendText(this.model.getMigliore().toString()+" (team "+this.model.getMigliore().getP().getTeam()+")");
     }
     
     @FXML
     void doSimula(ActionEvent event) {
-
+    	this.txtResult.clear();
+    	if(this.model.getGrafo() == null) {
+    		this.txtResult.appendText("Crea prima il grafo!\n");
+    		return;
+    	}
+    	if(this.cmbMatch.getValue()==null) {
+    		this.txtResult.appendText("Seleziona prima un match!\n");
+    		return;
+    	}
+    	int N = 0;
+    	try {
+    		N = Integer.parseInt(this.txtN.getText());
+    	} catch(NumberFormatException e) {
+    		this.txtResult.appendText("N deve essere un numero intero\n");
+    		return;
+    	}
+    	
+    	this.txtResult.appendText(this.model.doSimulation(N, this.cmbMatch.getValue()));
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -73,5 +104,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.cmbMatch.getItems().addAll(this.model.getAllMatches());
     }
 }
